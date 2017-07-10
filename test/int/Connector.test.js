@@ -19,25 +19,40 @@ describe("Connector INT", () => {
 
         let config = null;
         let error = null;
-        let rows = null;
+        let messages = null;
 
         before("Setup PubSub fake", () => {
 
             messages = [
                 {
-                    id: 1,
-                    name: "Item No. 1",
-                    info: "Item Information"
+                    data: {
+                        id: 1,
+                        name: "Item No. 1",
+                        info: "Item Information"
+                    },
+                    attributes: {
+                        timestamp: new Date().toISOString()
+                    }
                 },
                 {
-                    id: 2,
-                    name: "Item No. 2",
-                    info: null
+                    data: {
+                        id: 2,
+                        name: "Item No. 2",
+                        info: null
+                    },
+                    attributes: {
+                        timestamp: new Date().toISOString()
+                    }
                 },
                 {
-                    id: 3,
-                    name: "Item No. 3",
-                    info: "Item Information"
+                    data: {
+                        id: 3,
+                        name: "Item No. 3",
+                        info: "Item Information"
+                    },
+                    attributes: {
+                        timestamp: new Date().toISOString()
+                    }
                 }
             ];
 
@@ -63,7 +78,6 @@ describe("Connector INT", () => {
         });
 
         it("should be able to fake a delete action", () => {
-
             const record = new SourceRecord();
             record.key = "1";
             record.value = null; //will cause this record to be deleted when read by sink-task
@@ -80,21 +94,21 @@ describe("Connector INT", () => {
     describe("Source topic doesn't exist", () => {
 
         before("Setup PubSub fake", () => {
-            FakeTopic.setNextExists(false);
+            FakeTopic.resetCreateCalled();
         });
 
         it("should be able to run PubSub source config and create the topic", done => {
             const onError = _error => {
-                error = _error;
+                console.error(_error);
             };
 
             runSourceConnector(sourceProperties, [], onError)
                 .then(_ => {
-                    done(new Error("The source connector ran when it shouldn't"));
+                    assert.ok(FakeTopic.createCalled);
+                    done();
                 })
                 .catch(_error => {
-                    assert.equal(_error.message, "The specified dataset doesn't exist.");
-                    done();
+                    done(new Error(`The source connector ran when it shouldn't: ${_error.message}`));
                 });
         });
     });
@@ -102,22 +116,21 @@ describe("Connector INT", () => {
     describe("Source subscription doesn't exist", () => {
 
         before("Setup PubSub fake", () => {
-            FakeTopic.setNextExists(true);
-            FakeTopic.setNextExists(false);
+            FakeSubscription.resetCreateCalled();
         });
 
         it("should be able to run PubSub source config and create the subscription", done => {
             const onError = _error => {
-                error = _error;
+                console.error(_error);
             };
 
             runSourceConnector(sourceProperties, [], onError)
                 .then(_ => {
-                    done(new Error("The source connector ran when it shouldn't"));
+                    assert.ok(FakeSubscription.createCalled);
+                    done();
                 })
                 .catch(_error => {
-                    assert.equal(_error.message, "The specified table doesn't exist.");
-                    done();
+                    done(new Error(`The source connector ran when it shouldn't: ${_error.message}`));
                 });
         });
     });
@@ -125,10 +138,8 @@ describe("Connector INT", () => {
     describe("Sink connects, creates topic and streams", () => {
 
         before("Setup PubSub fake", () => {
-            FakeTopic.setNextExists(false);
             FakeTopic.resetCreateCalled();
-            FakeTopic.setNextExists(false);
-            FakeTopic.resetLastInsertedMessages();
+            FakeTopic.resetLastPublishedMessages();
         });
 
         let config = null;
@@ -163,7 +174,7 @@ describe("Connector INT", () => {
         });
 
         it("should be able to see messages", () => {
-            assert.equal(FakeTopic.lastInsertedMessages.length, 3);
+            assert.equal(FakeTopic.lastPublishedMessages.length, 3);
         });
     });
 });

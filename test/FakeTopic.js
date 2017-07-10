@@ -1,37 +1,35 @@
 "use strict";
 
+const FakeSubscription = require("./FakeSubscription");
+
 class FakeTopic {
 
     constructor(id, projectId) {
         this.id = id;
         this.projectId = projectId;
-
-        this._exists = FakeTopic.nextValues.exists;
-        this._messages = JSON.parse(JSON.stringify(FakeTopic.nextValues.messages));
     }
 
     get(options, callback) {
-        // this._exists = true;
-        // FakeTopic.lastCreateOptions = JSON.parse(JSON.stringify(options));
-        // FakeTopic.createCalled = true;
+        FakeTopic.createCalled = options && options.autoCreate || false;
 
         return callback(
             null,
-            {},
+            this,
             {});
     }
 
+    subscription(id) {
+        return new FakeSubscription(id, this.id, this.projectId);
+    }
+
     publish(messages, options, callback) {
-        // FakeTopic.lastInsertedMessages.push(...messages);
-        // return callback(null, {raw: options.raw, rowCount: FakeTopic.lastInsertedMessages.length});
+        FakeTopic.lastPublishedMessages.push(...messages);
+
+        return callback(null, messages);
     }
 
-    static setNextExists(exists) {
-        FakeTopic.nextValues.exists = exists;
-    }
-
-    static resetLastInsertedMessages() {
-        FakeTopic.lastInsertedMessages = [];
+    static resetLastPublishedMessages() {
+        FakeTopic.lastPublishedMessages = [];
     }
 
     static resetCreateCalled() {
@@ -40,12 +38,10 @@ class FakeTopic {
 }
 
 FakeTopic.nextValues = {
-    exists: true,
     description: {}
 };
 
-FakeTopic.lastInsertedMessages = [];
+FakeTopic.lastPublishedMessages = [];
 FakeTopic.createCalled = false;
-FakeTopic.alreadyExistsResponseActive = false;
 
 module.exports = FakeTopic;
