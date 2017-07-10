@@ -10,7 +10,7 @@ program
     .version(pjson.version)
     .option("-c, --config [string]", "Path to Config (alternatively)")
     .option("-k, --kafka [string]", "Zookeeper Connection String")
-    .option("-n, --name [string]", "Kafka Client Name")
+    .option("-n, --client_name [string]", "Kafka Client Name")
     .option("-t, --topic [string]", "Kafka Topic to Produce to")
     .option("-a, --partitions [integer]", "Amount of Kafka Topic Partitions")
     .option("-p, --project_id [string]", "GCloud project id")
@@ -27,8 +27,8 @@ if (program.kafka) {
     config.kafka.zkConStr = program.kafka;
 }
 
-if (program.name) {
-    config.kafka.clientName = program.name;
+if (program.client_name) {
+    config.kafka.clientName = program.client_name;
 }
 
 if (program.topic) {
