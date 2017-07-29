@@ -1,4 +1,6 @@
 # gcloud-pubsub-kafka-connect
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/nodefluent/gcloud-pubsub-kafka-connect.svg)](https://greenkeeper.io/)
 Kafka Connect connector for Google Cloud's PubSub
 
 [![Build Status](https://travis-ci.org/nodefluent/glouc-pubsub-kafka-connect.svg?branch=master)](https://travis-ci.org/nodefluent/glouc-pubsub-kafka-connect)
