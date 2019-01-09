@@ -37,7 +37,7 @@
     "dependencies": {
         "@google-cloud/pubsub": "^0.20.0",
         "async": "^2.6.1",
-        "kafka-connect": "^3.5.1"
+        "kafka-connect": "^3.7.0"
     },
     "devDependencies": {
         "coveralls": "^3.0.2",
