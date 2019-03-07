@@ -35,7 +35,7 @@
         "nkc-pubsub-sink": "bin/nkc-pubsub-sink.js"
     },
     "dependencies": {
-        "@google-cloud/pubsub": "^0.20.0",
+        "@google-cloud/pubsub": "^0.27.1",
         "async": "^2.6.1",
         "kafka-connect": "^3.5.1"
     },
